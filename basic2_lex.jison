@@ -4,23 +4,36 @@
 %%
 
 \s+               {/* skip whitespace */}
-[a-zA-Z_]\w*      {return 'x';}
+[a-zA-Z_]\w*      {return 'ID';}
+\d+		  {return 'NUM';}
+[;\.]             {return 'SEP';}
+[=]               {return 'EQU';}
 
 /lex
 
+%left 'SEP'
+
+%{
+
+    variables = {};   
+
+%}
+
 %%
 
-S   : A
-           { return $1+" identifiers"; }
+s   :   a        {
+                    console.log("Fin");
+		    console.log(JSON.stringify(variables));
+                 }
     ;
-A   : /* empty */  
-           { 
-              console.log("starting"); 
-              $$ = 0; 
-           }
-    | A x  { 
-              $$ = $1 + 1;  
-              console.log($$)
-           }
+
+a   : /* empty */  
+    | a SEP a    {
+	            console.log("Separación");		
+                 }
+    | ID EQU NUM {
+	            console.log("Igualdad detectada");
+		    variables[$1] = Number($3);
+                 }
     ;
 
